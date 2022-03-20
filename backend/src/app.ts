@@ -2,12 +2,13 @@ import express from "express";
 import Docker from "dockerode";
 import http from "http";
 import cors from "cors";
-import { CORS_ORIGINS, SERVER_PORT } from "./config";
+import { CORS_ORIGINS, EXPOSED_PORT, SERVER_PORT } from "./config";
 import connect from "./lib/connect";
 import { v4 as uuid } from "uuid";
 import initilizeWebSocket from "./routes/socket";
 import Browser from "./models/Browser.model";
 import Playground from "./models/Playground.model";
+import httpProxy from "http-proxy";
 
 const app = express();
 const server = new http.Server(app);
@@ -48,6 +49,16 @@ server.listen(SERVER_PORT, async () => {
   console.log("Server is listening on port 4000");
   await connect();
   initilizeWebSocket(server);
+});
+
+app.all("/view-app/:playgroundId/*", async (req, res) => {
+  const playgroundId = req.params.playgroundId;
+  const playground = await Playground.findOne({ playgroundId });
+  if (!playground) return res.status(404).send("Playground not found");
+  const url = playground.url;
+  if (!url) return res.status(404).send("Playground not found");
+  const apiProxy = httpProxy.createProxyServer({});
+  apiProxy.web(req, res, { target: url });
 });
 
 // When the server is closed all the containers which are running will be killed and removed
