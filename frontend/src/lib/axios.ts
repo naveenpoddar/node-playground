@@ -1,11 +1,12 @@
 import Axios from "axios";
+import { SERVER_URL } from "../config";
 import { getBrowserId } from "./util";
 
 const axios = Axios.create({
   params: {
     browserId: getBrowserId(),
   },
-  baseURL: "http://localhost:4000",
+  baseURL: SERVER_URL,
   withCredentials: true,
 });
 
