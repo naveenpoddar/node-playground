@@ -51,6 +51,16 @@ server.listen(SERVER_PORT, async () => {
   initilizeWebSocket(server);
 });
 
+app.all("/view-app/:playgroundId", async (req, res) => {
+  const playgroundId = req.params.playgroundId;
+  const playground = await Playground.findOne({ playgroundId });
+  if (!playground) return res.status(404).send("Playground not found");
+  const url = playground.url;
+  if (!url) return res.status(404).send("Playground not found");
+  const apiProxy = httpProxy.createProxyServer({});
+  apiProxy.web(req, res, { target: url });
+});
+
 app.all("/view-app/:playgroundId/*", async (req, res) => {
   const playgroundId = req.params.playgroundId;
   const playground = await Playground.findOne({ playgroundId });
