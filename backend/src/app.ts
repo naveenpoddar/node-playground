@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import Docker from "dockerode";
 import http from "http";
 import cors from "cors";
@@ -51,25 +51,24 @@ server.listen(SERVER_PORT, async () => {
   initilizeWebSocket(server);
 });
 
-app.all("/view-app/:playgroundId", async (req, res) => {
-  const playgroundId = req.params.playgroundId;
-  const playground = await Playground.findOne({ playgroundId });
-  if (!playground) return res.status(404).send("Playground not found");
-  const url = playground.url;
-  if (!url) return res.status(404).send("Playground not found");
-  const apiProxy = httpProxy.createProxyServer({});
-  apiProxy.web(req, res, { target: url });
-});
+app.all("/view-app/:playgroundId", handleProxy);
+app.all("/view-app/:playgroundId/*", handleProxy);
 
-app.all("/view-app/:playgroundId/*", async (req, res) => {
-  const playgroundId = req.params.playgroundId;
-  const playground = await Playground.findOne({ playgroundId });
-  if (!playground) return res.status(404).send("Playground not found");
-  const url = playground.url;
-  if (!url) return res.status(404).send("Playground not found");
-  const apiProxy = httpProxy.createProxyServer({});
-  apiProxy.web(req, res, { target: url });
-});
+async function handleProxy(req: Request, res: Response) {
+  try {
+    const playgroundId = req.params.playgroundId;
+    const playground = await Playground.findOne({ playgroundId });
+    if (!playground) return res.status(404).send("Playground not found");
+    const url = playground.url;
+    if (!url) return res.status(404).send("Playground not found");
+    const apiProxy = httpProxy.createProxyServer({});
+    req.url = req.originalUrl.replace(`/view-app/${playgroundId}`, "");
+    apiProxy.web(req, res, { target: url }, (err) => {
+      res.status(500).send(err);
+      console.log("LOL");
+    });
+  } catch (e) {}
+}
 
 // When the server is closed all the containers which are running will be killed and removed
 process.on("exit", async () => {
