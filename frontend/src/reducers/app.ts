@@ -5,6 +5,7 @@ import axios from "../lib/axios";
 import containerInstance from "../lib/containerInstance";
 import { File } from "../types/File";
 import { Tab } from "../types/Tab";
+import { getContainerId } from "../lib/util";
 
 export const APP_STATE_UPDATE = "APP_STATE_UPDATE";
 export const APP_STATE_OPEN_FILE = "APP_STATE_OPEN_FILE";
@@ -19,6 +20,7 @@ export interface AppState {
   currentTabIndex?: number;
   tabs: Tab[];
 
+  playgroundLoading: boolean;
   containerUrl?: string;
   containerIP?: string;
   io: ReturnType<typeof io> | null;
@@ -40,6 +42,7 @@ const initialAppState = {
   currentFile: null,
   tabs: [],
   io: null,
+  playgroundLoading:true
 };
 
 const appReducer: Reducer<AppState, AnyAction> = (
@@ -139,6 +142,7 @@ export const initilizeSocket: AppAction<{ [key: string]: string }> =
             io: socket,
             containerUrl: data.url,
             containerIP: data.containerIP,
+            playgroundLoading:false
           },
         });
       }
@@ -146,10 +150,10 @@ export const initilizeSocket: AppAction<{ [key: string]: string }> =
   };
 
 export const openFile: AppAction<{ file: File; containerIP: string }> =
-  ({ file, containerIP }) =>
+  ({ file }) =>
   async (dispatch) => {
     try {
-      const { data } = await containerInstance(containerIP).get(`/file`, {
+      const { data } = await containerInstance(getContainerId()).get(`/file`, {
         params: {
           path: file.path,
         },

@@ -2,6 +2,7 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import axios from "../../../lib/axios";
+import { getBrowserId } from "../../../lib/util";
 
 // URL: https://code-playground.com/playgrounds/from-template/{templateId}
 
@@ -22,6 +23,7 @@ const FromTemplate = ({ templateId }: { templateId: string }) => {
       const { data: pid } = await axios.get("/create-playground", {
         params: {
           templateId,
+          browserId: getBrowserId(),
         },
       });
 

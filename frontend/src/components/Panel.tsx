@@ -7,14 +7,16 @@ import { BsFillFileEarmarkCodeFill } from "react-icons/bs";
 import { FaFolder } from "react-icons/fa";
 import { BsFileEarmarkPlusFill } from "react-icons/bs";
 import { HiRefresh } from "react-icons/hi";
+import Skeleton from "react-loading-skeleton";
 import { File } from "../types/File";
+import Loading from "./Loading";
 
 const ResizePanel = dynamic(() => import("@alexkreidler/react-resize-panel"), {
   ssr: false,
 });
 
 const Panel = () => {
-  const { files, io, containerIP } = useSelector(
+  const { files, io, containerIP, playgroundLoading } = useSelector(
     (state: RootState) => state.app
   );
   const d = useDispatch();
@@ -60,6 +62,7 @@ const Panel = () => {
           </div>
         </div>
         <div className="panel-body app-scroll">
+          {playgroundLoading && <Loading count={3} />}
           {files.map((file) => (
             <File
               name={file.name}

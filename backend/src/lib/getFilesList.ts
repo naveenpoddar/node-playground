@@ -2,10 +2,10 @@ import { File } from "../Types";
 import ContainerInstance from "./ContainerInstance";
 
 export default async function getFilesList(
-  containerIP: string,
+  containerID: string,
   path: string = "/app"
 ) {
-  const containerInstance = ContainerInstance(containerIP);
+  const containerInstance = ContainerInstance(containerID);
 
   const { data } = await containerInstance.get("/files", {
     params: {
@@ -20,7 +20,7 @@ export default async function getFilesList(
     if (file.isDirectory) {
       files.push({
         ...file,
-        files: await getFilesList(containerIP, `${path}/${file.name}`),
+        files: await getFilesList(containerID, `${path}/${file.name}`),
       });
     } else {
       files.push(file);

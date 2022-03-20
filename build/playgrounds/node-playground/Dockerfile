@@ -1,7 +1,6 @@
 FROM node:12
 WORKDIR /app
-COPY app .
-RUN npm install --global nodemon
+RUN npm install --global nodemon static-server
 
 COPY server/package.json /tmp/server/package.json
 COPY server/package-lock.json /tmp/server/package-lock.json

@@ -14,7 +14,9 @@ import initilizeWebSocket from "./routes/socket";
 import Browser from "./models/Browser.model";
 import Playground from "./models/Playground.model";
 import httpProxy from "http-proxy";
-import generateShortID from "./lib/generateShortID";
+import logger from "./lib/logger";
+
+global.logger = logger;
 
 const app = express();
 const server = new http.Server(app);
@@ -24,14 +26,16 @@ const docker = new Docker();
 app.use(cors({ origin: CORS_ORIGINS, credentials: true }));
 
 app.get("/", async (req, res) => {
-  let browserId = req.query.browserId as string;
+  try {
+    let browserId = req.query.browserId as string;
 
-  if (!browserId) {
-    browserId = uuid();
-    await Browser.create({ id: browserId });
-  }
+    if (!browserId) {
+      browserId = uuid();
+      await Browser.create({ id: browserId });
+    }
 
-  return res.send(browserId);
+    return res.send(browserId);
+  } catch (e) {}
 });
 
 app.get("/create-playground", async (req, res) => {
@@ -49,24 +53,26 @@ app.get("/create-playground", async (req, res) => {
     browser.playgrounds.push(playground._id);
     await browser.save();
 
+    logger.INCOMING_REQUEST(`${browserId.slice(0, 10)}.. Created a playground`);
     return res.send(playground.playgroundId);
-  } catch (e) {
-    console.log(e);
+  } catch (e: any) {
+    logger.INCOMING_REQUEST_ERROR(e.message);
     return res.status(500).send(e);
   }
 });
 
 server.listen(SERVER_PORT, async () => {
-  console.log("Server is listening on port 4000");
+  console.clear();
+  logger.info("Server is listening on port 4000");
   await connect();
   initilizeWebSocket(server);
 });
 
-app.all("/:viewId", handleViewProxy);
-app.all("/:viewId/*", handleViewProxy);
-
 app.all("/containers/:containerId", handleContainerProxy);
 app.all("/containers/:containerId/*", handleContainerProxy);
+
+app.all("/:viewId", handleViewProxy);
+app.all("/:viewId/*", handleViewProxy);
 
 async function handleViewProxy(req: Request, res: Response) {
   try {
@@ -74,10 +80,10 @@ async function handleViewProxy(req: Request, res: Response) {
     const playground = await Playground.findOne({ viewId });
     if (!playground) return res.status(404).send("Playground not found");
 
-    const url = playground.url;
-    if (!url) return res.status(404).send("Playground is not active");
+    const ip = playground.containerIP;
+    if (!ip) return res.status(404).send("Playground is not active");
 
-    handleProxy(req, res, url, `/${viewId}`);
+    handleProxy(req, res, `http://${ip}:${EXPOSED_PORT}`, `/${viewId}`);
   } catch (e) {}
 }
 
@@ -93,7 +99,7 @@ async function handleContainerProxy(req: Request, res: Response) {
     handleProxy(
       req,
       res,
-      `http://${ip}/${CONTAINER_PORT}`,
+      `http://${ip}:${CONTAINER_PORT}`,
       `/containers/${containerId}`
     );
   } catch (e) {}

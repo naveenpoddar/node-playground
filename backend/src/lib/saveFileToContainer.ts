@@ -1,12 +1,12 @@
 import ContainerInstance from "./ContainerInstance";
 
 export default async function saveFileToContainer(
-  containerIP: string,
+  containerID: string,
   path: string,
   content: string
 ) {
   try {
-    const containerInstance = ContainerInstance(containerIP);
+    const containerInstance = ContainerInstance(containerID);
 
     const { data } = await containerInstance.post(`/save-file`, {
       path,

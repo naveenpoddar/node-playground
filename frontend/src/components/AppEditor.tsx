@@ -12,6 +12,7 @@ import {
   closeTab,
 } from "../reducers/app";
 import { AiOutlineSave } from "react-icons/ai";
+import Loading from "./Loading";
 
 const fileTypes: { [ex: string]: string } = {
   css: "css",
@@ -30,8 +31,15 @@ const fileTypes: { [ex: string]: string } = {
 
 const AppEditor = () => {
   const d = useDispatch();
-  const { code, currentFile, io, tabs, temporaryCode, currentTabIndex } =
-    useSelector((state: RootState) => state.app);
+  const {
+    code,
+    currentFile,
+    io,
+    tabs,
+    temporaryCode,
+    currentTabIndex,
+    playgroundLoading,
+  } = useSelector((state: RootState) => state.app);
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const { current: editor } = editorRef;
@@ -109,6 +117,7 @@ const AppEditor = () => {
       </div>
 
       <div className="main-editor">
+        {playgroundLoading && <Loading count={3} />}
         {currentFile && tabs.length !== 0 && (
           <Editor
             theme="vs-dark"

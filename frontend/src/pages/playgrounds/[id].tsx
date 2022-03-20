@@ -5,7 +5,6 @@ import BrowserWindow from "../../components/BrowserWindow";
 import dynamic from "next/dynamic";
 import { initilizeSocket } from "../../reducers/app";
 import { useDispatch } from "react-redux";
-import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import { getBrowserId } from "../../lib/util";
 

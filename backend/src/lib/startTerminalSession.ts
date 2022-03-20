@@ -3,7 +3,8 @@ import { Socket } from "socket.io";
 
 export default async function startTerminalSession(
   container: Container,
-  socket: Socket
+  socket: Socket,
+  firstCmdCallback: Function = () => {}
 ) {
   const exec = await container.exec({
     Cmd: ["bash"],
@@ -20,7 +21,7 @@ export default async function startTerminalSession(
     /** Runs when the container terminal has some text */
     if (!isFirstStream) {
       isFirstStream = true;
-      socket.emit("start-webserver", 5858);
+      firstCmdCallback();
     }
 
     socket.emit("terminal:data", data.toString());

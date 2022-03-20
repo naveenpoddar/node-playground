@@ -1,4 +1,7 @@
+import axios from "axios";
 import Docker from "dockerode";
+import { CONTAINER_PORT } from "../config";
+import getContainerIP from "./getContainerIP";
 
 const docker = new Docker();
 
@@ -21,5 +24,23 @@ export default async function initilizeContainer({ template }: Prop) {
     StdinOnce: false,
   });
   await container.start();
+  let active = false;
+  const ip = await getContainerIP(container);
+  const endpoint = `http://${ip}:${CONTAINER_PORT}/files`;
+
+  async function pingContainer() {
+    try {
+      await axios.get(endpoint);
+      active = true;
+    } catch (e) {
+      return;
+    }
+  }
+
+  do {
+    await pingContainer();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  } while (!active);
+
   return container;
 }

@@ -43,10 +43,9 @@ function TerminalComponent() {
       io?.emit("terminal:data-write", data);
     });
 
-    io.on("start-webserver", (port) => {
-      const cmd = `static-server -p ${port} --no-cache\n`;
-      terminalRef.current?.write(cmd);
-      io?.emit("terminal:data-write", cmd);
+    io.on("scripts:install", (script: string) => {
+      terminalRef.current?.write(`${script}\n`);
+      io?.emit("terminal:data-write", `${script}\n`);
     });
   }, [io]);
 

@@ -1,0 +1,5 @@
+{
+  "tabs": ["index.html", "script.js", "style.css"],
+  "install": "",
+  "run": "static-server -p 5858 --no-cache"
+}

@@ -152,6 +152,21 @@ main {
     height: 100%;
     overflow-y: auto;
     padding-bottom: 5rem;
+
+    & > span {
+      overflow: hidden;
+      margin-top: 1em;
+
+      .loading {
+        padding: 0.45rem 1.5em;
+        margin: 0.5em;
+        margin-inline: 1em;
+        width: initial;
+        display: flex;
+        right: 0;
+        left: 0;
+      }
+    }
   }
 
   .file {

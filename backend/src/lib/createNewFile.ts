@@ -1,8 +1,8 @@
 import ContainerInstance from "./ContainerInstance";
 
-export default async function createNewFile(containerIP: string, path: string) {
+export default async function createNewFile(containerID: string, path: string) {
   try {
-    const containerInstance = ContainerInstance(containerIP);
+    const containerInstance = ContainerInstance(containerID);
 
     await containerInstance.post(`/create-file?path=${path}`);
   } catch (e: any) {

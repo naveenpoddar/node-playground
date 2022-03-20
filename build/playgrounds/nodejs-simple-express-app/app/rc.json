@@ -1,0 +1,5 @@
+{
+  "tabs": ["index.js"],
+  "install": "npm install",
+  "run": "node index.js"
+}
