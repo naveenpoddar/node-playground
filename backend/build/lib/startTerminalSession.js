@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-async function startTerminalSession(container, socket) {
+async function startTerminalSession(container, socket, firstCmdCallback = () => { }) {
     const exec = await container.exec({
         Cmd: ["bash"],
         AttachStderr: true,
@@ -14,7 +14,7 @@ async function startTerminalSession(container, socket) {
         /** Runs when the container terminal has some text */
         if (!isFirstStream) {
             isFirstStream = true;
-            socket.emit("start-webserver", 5858);
+            firstCmdCallback();
         }
         socket.emit("terminal:data", data.toString());
     });

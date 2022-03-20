@@ -7,6 +7,6 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const config_1 = require("../config");
 async function connect() {
     await mongoose_1.default.connect(config_1.MONGO_URI);
-    console.log("Connected to MongoDB");
+    logger.info("Connected to MongoDB");
 }
 exports.default = connect;

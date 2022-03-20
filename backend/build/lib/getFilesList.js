@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ContainerInstance_1 = __importDefault(require("./ContainerInstance"));
-async function getFilesList(containerIP, path = "/app") {
-    const containerInstance = (0, ContainerInstance_1.default)(containerIP);
+async function getFilesList(containerID, path = "/app") {
+    const containerInstance = (0, ContainerInstance_1.default)(containerID);
     const { data } = await containerInstance.get("/files", {
         params: {
             path,
@@ -17,7 +17,7 @@ async function getFilesList(containerIP, path = "/app") {
         if (file.isDirectory) {
             files.push({
                 ...file,
-                files: await getFilesList(containerIP, `${path}/${file.name}`),
+                files: await getFilesList(containerID, `${path}/${file.name}`),
             });
         }
         else {

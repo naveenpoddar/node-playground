@@ -8,10 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlaygroundClass = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
 const uuid_1 = require("uuid");
+const generateShortID_1 = __importDefault(require("../lib/generateShortID"));
 class PlaygroundClass {
 }
 __decorate([
@@ -38,6 +42,10 @@ __decorate([
     (0, typegoose_1.prop)({ required: true, default: () => (0, uuid_1.v4)() }),
     __metadata("design:type", String)
 ], PlaygroundClass.prototype, "playgroundId", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ required: true, default: () => (0, generateShortID_1.default)(4), unique: true }),
+    __metadata("design:type", String)
+], PlaygroundClass.prototype, "viewId", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", String)

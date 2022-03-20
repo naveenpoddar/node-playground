@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ContainerInstance_1 = __importDefault(require("./ContainerInstance"));
-async function createNewFile(containerIP, path) {
+async function createNewFile(containerID, path) {
     try {
-        const containerInstance = (0, ContainerInstance_1.default)(containerIP);
+        const containerInstance = (0, ContainerInstance_1.default)(containerID);
         await containerInstance.post(`/create-file?path=${path}`);
     }
     catch (e) {
