@@ -1,9 +1,9 @@
 import axios from "axios";
-import { CONTAINER_PORT } from "../config";
+import { SERVER_URL } from "../config";
 
 const ContainerInstance = (containerIP: string) => {
   return axios.create({
-    baseURL: `http://${containerIP}:${CONTAINER_PORT}`,
+    baseURL: `${SERVER_URL}/containers/${containerIP}`,
     withCredentials: true,
   });
 };

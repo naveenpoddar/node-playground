@@ -2,7 +2,7 @@ import Docker, { Container } from "dockerode";
 import http from "http";
 import { get } from "lodash";
 import { Server } from "socket.io";
-import { EXPOSED_PORT } from "../config";
+import { EXPOSED_PORT, SERVER_URL } from "../config";
 import checkPlayground from "../lib/checkPlayground";
 import ContainerInstance from "../lib/ContainerInstance";
 import createNewFile from "../lib/createNewFile";
@@ -30,7 +30,7 @@ export default function initilizeWebSocket(server: http.Server) {
       template: playground.templateId,
     });
     let containerIP = await getContainerIP(container);
-    let containerUrl = `http://${containerIP}:${EXPOSED_PORT}`;
+    let containerUrl = `http://${SERVER_URL}/${playground.viewId}`;
 
     let retryCount = 0;
 

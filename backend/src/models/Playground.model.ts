@@ -1,5 +1,6 @@
 import { getModelForClass, prop } from "@typegoose/typegoose";
 import { v4 as uuid } from "uuid";
+import generateShortID from "../lib/generateShortID";
 
 export class PlaygroundClass {
   @prop()
@@ -19,6 +20,9 @@ export class PlaygroundClass {
 
   @prop({ required: true, default: () => uuid() })
   public playgroundId!: string;
+
+  @prop({ required: true, default: () => generateShortID(4), unique: true })
+  public viewId!: string;
 
   @prop({ required: true })
   public templateId!: string;
