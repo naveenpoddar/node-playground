@@ -91,6 +91,7 @@ const AppEditor = () => {
               currentFile?.path === tab.path ? "active" : ""
             }`}
             onClick={() => d(openTab(tab))}
+            key={tab.path}
           >
             <span className="name">{tab.name}</span>
             {tab.hasChanges ? (
