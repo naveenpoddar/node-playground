@@ -1,8 +1,9 @@
 import Axios from "axios";
+import { SERVER_URL } from "../config";
 
 const containerInstance = (IP: string) =>
   Axios.create({
-    baseURL: `http://${IP}:7777`,
+    baseURL: `${SERVER_URL}/containers/${IP}`,
     withCredentials: true,
   });
 
