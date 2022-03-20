@@ -17,5 +17,5 @@ const configureStore = () => {
 
 const wrapper = createWrapper(configureStore);
 
-export { RootState };
+export type { RootState };
 export default wrapper;
