@@ -1,6 +1,6 @@
 import { AnyAction, Dispatch, Reducer } from "redux";
 import { io } from "socket.io-client";
-import { SERVER_URL } from "../config";
+import { WS_URI } from "../config";
 import axios from "../lib/axios";
 import containerInstance from "../lib/containerInstance";
 import { File } from "../types/File";
@@ -24,6 +24,9 @@ export interface AppState {
   containerUrl?: string;
   containerIP?: string;
   io: ReturnType<typeof io> | null;
+
+  fileContentsVisible: boolean;
+  terminalVisible: boolean;
 }
 
 interface AppDispatch {
@@ -35,14 +38,17 @@ type AppAction<T = void> = (
   params: T
 ) => (dispatch: Dispatch<AppDispatch>) => Promise<any>;
 
-const initialAppState = {
+const initialAppState: AppState = {
   code: "",
   temporaryCode: "",
   files: [],
   currentFile: null,
   tabs: [],
   io: null,
-  playgroundLoading:true
+
+  playgroundLoading: true,
+  fileContentsVisible: true,
+  terminalVisible: true,
 };
 
 const appReducer: Reducer<AppState, AnyAction> = (
@@ -112,6 +118,14 @@ const appReducer: Reducer<AppState, AnyAction> = (
   }
 };
 
+export const updateAppState: AppAction<Partial<AppState>> =
+  (obj) => async (dispatch) => {
+    dispatch({
+      type: APP_STATE_UPDATE,
+      payload: obj,
+    });
+  };
+
 export const initApp: AppAction = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/", {
@@ -125,7 +139,7 @@ export const initApp: AppAction = () => async (dispatch) => {
 
 export const initilizeSocket: AppAction<{ [key: string]: string }> =
   (query) => async (dispatch) => {
-    const socket = io(SERVER_URL, {
+    const socket = io(WS_URI, {
       transports: ["websocket"],
       query,
     });
@@ -142,7 +156,7 @@ export const initilizeSocket: AppAction<{ [key: string]: string }> =
             io: socket,
             containerUrl: data.url,
             containerIP: data.containerIP,
-            playgroundLoading:false
+            playgroundLoading: false,
           },
         });
       }

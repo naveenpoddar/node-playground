@@ -40,7 +40,10 @@ export default class IPlayground {
 
   public async getRuntimeConfig() {
     try {
-      const { data } = await this.instance!.get("/file", {
+      const instance = await this.genericInstance();
+      console.log(instance?.defaults);
+      if (!instance) return;
+      const { data } = await instance.get("/file", {
         params: {
           path: "rc.json",
         },
@@ -48,7 +51,7 @@ export default class IPlayground {
 
       return JSON.parse(data.content);
     } catch (e) {
-      logger.error("GetRCConfig: " + e);
+      logger.error("GetRuntimeConfig: " + e);
       return {};
     }
   }
@@ -122,12 +125,19 @@ export default class IPlayground {
 
   public async startPlaygroundOnClient() {
     this.emitPlaygroundInfo();
+
     await startTerminalSession(this.dockerContainer, this.socket, async () => {
       // Aftet the Terminal has initilized
       const config = await this.getRuntimeConfig();
       const installScript: string = get(config, "install");
       installScript && this.socket.emit("scripts:install", installScript);
+
+      this.socket.on("get-script:run", () => {
+        const runScript: string = get(config, "run");
+        runScript && this.socket.emit("scripts:run", runScript);
+      });
     });
+
     await this.refreshFileContents();
 
     this.socket.on("file-save", async (data) => {
@@ -148,7 +158,7 @@ export default class IPlayground {
       const files = await getFilesList(this.containerId!);
       this.socket.emit("files", files);
     } catch (e) {
-      logger.error("GetFilesList: " + e);
+      // logger.error("GetFilesList: " + e);
     }
   }
 

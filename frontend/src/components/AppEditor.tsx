@@ -117,7 +117,6 @@ const AppEditor = () => {
       </div>
 
       <div className="main-editor">
-        {playgroundLoading && <Loading count={3} />}
         {currentFile && tabs.length !== 0 && (
           <Editor
             theme="vs-dark"

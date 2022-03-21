@@ -1,4 +1,6 @@
 import { GetServerSideProps } from "next";
+import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import axios from "../../../lib/axios";
@@ -29,7 +31,7 @@ const FromTemplate = ({ templateId }: { templateId: string }) => {
 
       return router.replace(`/playgrounds/${pid}`);
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
       setErr(e.message);
     }
   };
@@ -38,7 +40,31 @@ const FromTemplate = ({ templateId }: { templateId: string }) => {
     createPlayground();
   }, []);
 
-  return <div style={{ color: "white" }}>Something Went Wrong: {err}</div>;
+  return (
+    <div
+      style={{
+        color: "white",
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Head>
+        <title>Your Playground is being created</title>
+      </Head>
+      {err && (
+        <>
+          <h2>Something Went Wrong: {err}</h2>
+          <Link href="/">Go Back</Link>
+        </>
+      )}
+
+      {!err && <h2>Your playground ie being created...</h2>}
+    </div>
+  );
 };
 
 export default FromTemplate;

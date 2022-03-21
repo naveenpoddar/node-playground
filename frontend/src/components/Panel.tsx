@@ -1,25 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../lib/store";
 import { openFile, setFiles } from "../reducers/app";
-import dynamic from "next/dynamic";
 import { BsFillFileEarmarkCodeFill } from "react-icons/bs";
 import { FaFolder } from "react-icons/fa";
 import { BsFileEarmarkPlusFill } from "react-icons/bs";
 import { HiRefresh } from "react-icons/hi";
-import Skeleton from "react-loading-skeleton";
 import { File } from "../types/File";
 import Loading from "./Loading";
-
-const ResizePanel = dynamic(() => import("@alexkreidler/react-resize-panel"), {
-  ssr: false,
-});
 
 const Panel = () => {
   const { files, io, containerIP, playgroundLoading } = useSelector(
     (state: RootState) => state.app
   );
+  const [panelVisibility, setPanelVisibility] = useState(true);
   const d = useDispatch();
+  const isBrowser = typeof window !== "undefined";
 
   useEffect(() => {
     if (!io) return;
@@ -48,34 +44,28 @@ const Panel = () => {
   };
 
   return (
-    <ResizePanel
-      direction="e"
-      containerClass="panel-container"
-      borderClass="dragger"
-    >
-      <div className="panel">
-        <div className="panel-header">
-          <span>Explorer</span>
-          <div className="actions">
-            <BsFileEarmarkPlusFill onClick={newFile} />
-            <HiRefresh onClick={() => io?.emit("refresh")} />
-          </div>
-        </div>
-        <div className="panel-body app-scroll">
-          {playgroundLoading && <Loading count={3} />}
-          {files.map((file) => (
-            <File
-              name={file.name}
-              key={file.name}
-              files={file.files}
-              isDir={file.isDirectory}
-              path={file.path}
-              onClick={handleFileOpen}
-            />
-          ))}
+    <div className="panel">
+      <div className="panel-header">
+        <span>Explorer</span>
+        <div className="actions">
+          <BsFileEarmarkPlusFill onClick={newFile} />
+          <HiRefresh onClick={() => io?.emit("refresh")} />
         </div>
       </div>
-    </ResizePanel>
+      <div className="panel-body app-scroll">
+        {playgroundLoading && <Loading count={3} />}
+        {files.map((file) => (
+          <File
+            name={file.name}
+            key={file.name}
+            files={file.files}
+            isDir={file.isDirectory}
+            path={file.path}
+            onClick={handleFileOpen}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 

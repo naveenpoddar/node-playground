@@ -25,6 +25,8 @@ const docker = new Docker();
 
 app.use(cors({ origin: CORS_ORIGINS, credentials: true }));
 
+app.all("/healthcheck", (req, res) => res.sendStatus(200));
+
 app.get("/", async (req, res) => {
   try {
     let browserId = req.query.browserId as string;
@@ -35,7 +37,10 @@ app.get("/", async (req, res) => {
     }
 
     return res.send(browserId);
-  } catch (e) {}
+  } catch (e: any) {
+    logger.INCOMING_REQUEST_ERROR(e.message);
+    return res.status(500).send(e);
+  }
 });
 
 app.get("/create-playground", async (req, res) => {

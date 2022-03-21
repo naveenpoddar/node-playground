@@ -12,6 +12,7 @@ const ResizePanel = dynamic(() => import("@alexkreidler/react-resize-panel"), {
 const BrowserWindow = () => {
   const { containerUrl, io } = useSelector((state: RootState) => state.app);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const isBrowser = typeof window !== "undefined";
 
   const reloadIframe = () => {
     try {
@@ -37,32 +38,26 @@ const BrowserWindow = () => {
   }, []);
 
   return (
-    <ResizePanel
-      direction="w"
-      containerClass="panel-container"
-      borderClass="dragger"
-    >
-      <div className="browser-window-wrapper">
-        <div className="window-head">
-          <HiRefresh onClick={reloadIframe} />
-          <input
-            type="text"
-            className="url-container"
-            disabled
-            value={containerUrl}
-          />
-          <IoMdOpen onClick={openWindow} />
-        </div>
-
-        <div className="window-body">
-          <iframe
-            src={containerUrl}
-            ref={iframeRef}
-            sandbox="allow-scripts allow-popups allow-forms allow-modals allow-orientation-lock allow-pointer-lock"
-          ></iframe>
-        </div>
+    <div className="browser-window">
+      <div className="window-head">
+        <HiRefresh onClick={reloadIframe} />
+        <input
+          type="text"
+          className="url-container"
+          disabled
+          value={containerUrl}
+        />
+        <IoMdOpen onClick={openWindow} />
       </div>
-    </ResizePanel>
+
+      <div className="window-body">
+        <iframe
+          src={containerUrl}
+          ref={iframeRef}
+          sandbox="allow-scripts allow-popups allow-forms allow-modals allow-orientation-lock allow-pointer-lock"
+        ></iframe>
+      </div>
+    </div>
   );
 };
 

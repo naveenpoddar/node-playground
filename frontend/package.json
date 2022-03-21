@@ -23,6 +23,7 @@
     "react-icons": "^4.3.1",
     "react-loading-skeleton": "^3.0.3",
     "react-redux": "^7.2.6",
+    "react-simple-resizer": "^2.1.0",
     "redux": "^4.1.2",
     "redux-thunk": "^2.4.1",
     "sass": "^1.49.9",

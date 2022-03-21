@@ -4,9 +4,11 @@ import "xterm/css/xterm.css";
 import { FitAddon } from "xterm-addon-fit";
 import { useSelector } from "react-redux";
 import { RootState } from "../lib/store";
+import { Section } from "react-simple-resizer";
 
 function TerminalComponent() {
   const terminalRef = useRef<Terminal | null>(null);
+  const fitAddonRef = useRef<FitAddon | null>(null);
   const { io } = useSelector((state: RootState) => state.app);
 
   useEffect(() => {
@@ -21,16 +23,24 @@ function TerminalComponent() {
           background: "#181818",
         },
       });
-      const fitAddon = new FitAddon();
+      fitAddonRef.current = new FitAddon();
       terminalRef.current = term;
-      term.loadAddon(fitAddon);
+      term.loadAddon(fitAddonRef.current);
       term.open(TerminalElement);
-      if (typeof window !== "undefined") {
-        const observer = new ResizeObserver(() => fitAddon.fit());
-        observer.observe(TerminalWrapper.parentElement as HTMLElement);
-      }
+      fitAddonRef.current.fit();
     }
   }, []);
+
+  const fitTerminal = () => {
+    if (!fitAddonRef.current) return;
+    const dimentions = fitAddonRef.current.proposeDimensions();
+    if (
+      Number.isInteger(dimentions.cols) ||
+      Number.isInteger(dimentions.rows)
+    ) {
+      fitAddonRef.current.fit();
+    }
+  };
 
   useEffect(() => {
     if (!io || !terminalRef.current) return;
@@ -49,7 +59,11 @@ function TerminalComponent() {
     });
   }, [io]);
 
-  return <div id="term"></div>;
+  return (
+    <Section defaultSize={180} onSizeChanged={fitTerminal}>
+      <div id="term"></div>
+    </Section>
+  );
 }
 
 export default TerminalComponent;
