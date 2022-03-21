@@ -1,4 +1,5 @@
-// export const SERVER_URL = "https://server.cursor.works";
-export const SERVER_URL = "http://localhost:4000";
+import dotenv from "dotenv";
+dotenv.config();
 
-export const WS_URI = "http://localhost:4000";
+export const SERVER_URL = process.env.SERVER_URL || "http://localhost:4000";
+export const WS_URI = process.env.WS_URI || "http://localhost:4000";

@@ -12,6 +12,7 @@
     "@alexkreidler/react-resize-panel": "^0.4.5",
     "@monaco-editor/react": "^4.3.1",
     "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
     "drag-resize-border": "^0.0.4",
     "language-detect": "^1.1.0",
     "monaco-editor": "^0.33.0",
