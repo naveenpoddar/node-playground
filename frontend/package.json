@@ -14,6 +14,7 @@
     "axios": "^0.26.1",
     "dotenv": "^16.0.0",
     "drag-resize-border": "^0.0.4",
+    "fs": "^0.0.1-security",
     "language-detect": "^1.1.0",
     "monaco-editor": "^0.33.0",
     "next": "12.1.0",

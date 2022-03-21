@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+const DEFAULT_SERVER_HOME = "http://localhost";
+
 export const SERVER_PORT = 4000;
 export const CORS_ORIGINS = [
   "http://localhost:3000",
@@ -9,7 +11,9 @@ export const CORS_ORIGINS = [
 ];
 
 // export const SERVER_URL = `http://3.109.143.126:${SERVER_PORT}`;
-export const SERVER_URL = `${process.env.SERVER_HOME}:${SERVER_PORT}`;
+export const SERVER_URL = `${
+  process.env.SERVER_HOME || DEFAULT_SERVER_HOME
+}:${SERVER_PORT}`;
 
 export const EXPOSED_PORT = 5858;
 export const CONTAINER_PORT = 7777;

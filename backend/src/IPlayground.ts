@@ -12,6 +12,7 @@ import initilizeContainer from "./lib/initilizeContainer";
 import saveFileToContainer from "./lib/saveFileToContainer";
 import startTerminalSession from "./lib/startTerminalSession";
 import Playground, { PlaygroundClass } from "./models/Playground.model";
+import { getError } from "./lib/getError";
 
 const docker = new Docker();
 
@@ -41,7 +42,6 @@ export default class IPlayground {
   public async getRuntimeConfig() {
     try {
       const instance = await this.genericInstance();
-      console.log(instance?.defaults);
       if (!instance) return;
       const { data } = await instance.get("/file", {
         params: {
@@ -51,7 +51,7 @@ export default class IPlayground {
 
       return JSON.parse(data.content);
     } catch (e) {
-      logger.error("GetRuntimeConfig: " + e);
+      logger.error("GetRuntimeConfig: " + getError(e));
       return {};
     }
   }
@@ -103,7 +103,7 @@ export default class IPlayground {
 
       await instance.post("/load-backup", this.playgroundObj.files);
     } catch (e) {
-      logger.error("Error loading files to playground: " + e);
+      logger.error("Error loading files to playground: " + getError(e));
       throw new Error("Error loading files to playground");
     }
   }
@@ -158,7 +158,7 @@ export default class IPlayground {
       const files = await getFilesList(this.containerId!);
       this.socket.emit("files", files);
     } catch (e) {
-      // logger.error("GetFilesList: " + e);
+      logger.error("GetFilesList: " + getError(e));
     }
   }
 
@@ -169,7 +169,7 @@ export default class IPlayground {
       saveFileToContainer(this.containerId!, path, code);
       await this.refreshFileContents();
     } catch (e) {
-      logger.error("FileSave: " + e);
+      logger.error("FileSave: " + getError(e));
     }
   }
 
@@ -178,7 +178,7 @@ export default class IPlayground {
       await createNewFile(this.containerId!, path);
       await this.refreshFileContents();
     } catch (e) {
-      logger.error("NewFile: " + e);
+      logger.error("NewFile: " + getError(e));
     }
   }
 

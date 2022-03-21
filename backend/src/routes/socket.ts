@@ -6,14 +6,17 @@ export default function initilizeWebSocket(server: http.Server) {
   const io = new Server(server);
 
   io.on("connection", async (socket) => {
-    let intervalId: NodeJS.Timer | null = null;
     try {
       const playgroundId: string = socket.handshake.query
         .playgroundId as string;
       const browserId: string = socket.handshake.query.browserId as string;
 
+      console.log("playground loading");
+
       const playground = new IPlayground(playgroundId, browserId, socket);
       await playground.fetchPlaygroundObj();
+
+      console.log("got it");
 
       if (playground.isNew()) {
         await playground.initilizePlaygroundWithTemplate(
@@ -24,15 +27,12 @@ export default function initilizeWebSocket(server: http.Server) {
         await playground.loadFilesToPlayground();
       }
 
+      console.log("loaded everything");
+
       await playground.syncPlaygroundWithDB();
       await playground.startPlaygroundOnClient();
-
-      intervalId = setInterval(async () => {
-        await playground.refreshFileContents();
-      }, 10000);
     } catch (e) {
-      logger.error("Something went wrong: " + e);
-      intervalId && clearInterval(intervalId);
+      logger.error("Something went wrong: " + getError(e));
     }
   });
 }
